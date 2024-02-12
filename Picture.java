@@ -253,6 +253,54 @@ public class Picture extends SimplePicture
 		}
 		return result; 
 	}
+	
+	public Picture shiftRight(int percent){
+		Pixel[][] pixels = this.getPixels2D();
+		Picture result = new Picture(pixels.length, pixels[0].length);
+		Pixel[][] resultPixels = result.getPixels2D();
+		int move = pixels[0].length * percent / 100; 
+		for (int yVal = 0; yVal < pixels.length; yVal++){
+			for (int xVal = 0; xVal < pixels[0].length; xVal++){
+				if (xVal + move < pixels[0].length){
+					resultPixels[yVal][xVal + move].setRed(pixels[yVal][xVal].getRed());
+					resultPixels[yVal][xVal + move].setBlue(pixels[yVal][xVal].getBlue());
+					resultPixels[yVal][xVal + move].setGreen(pixels[yVal][xVal].getGreen());
+				}
+				else{
+					resultPixels[yVal][xVal + move - pixels[0].length].setRed(pixels[yVal][xVal].getRed());
+					resultPixels[yVal][xVal + move - pixels[0].length].setBlue(pixels[yVal][xVal].getBlue());
+					resultPixels[yVal][xVal + move - pixels[0].length].setGreen(pixels[yVal][xVal].getGreen());
+				}
+			}
+		}
+		return result; 
+	}
+	
+	public Picture stairStep(int shiftCount, int steps){
+		Pixel[][] pixels = this.getPixels2D();
+		Picture result = new Picture(pixels.length, pixels[0].length);
+		Pixel[][] resultPixels = result.getPixels2D();
+		int move = 0; 
+		int stepSize = pixels.length / steps; 
+		int access = pixels.length - stepSize * steps; 
+		int addPixelIndex = steps / access; 
+		for (int yVal = 0; yVal < pixels.length; yVal++){
+			for (int xVal = 0; xVal < pixels[0].length; xVal++){
+				if (xVal + move < pixels[0].length){
+					resultPixels[yVal][xVal + move].setRed(pixels[yVal][xVal].getRed());
+					resultPixels[yVal][xVal + move].setBlue(pixels[yVal][xVal].getBlue());
+					resultPixels[yVal][xVal + move].setGreen(pixels[yVal][xVal].getGreen());
+				}
+				else{
+					resultPixels[yVal][xVal + move - pixels[0].length].setRed(pixels[yVal][xVal].getRed());
+					resultPixels[yVal][xVal + move - pixels[0].length].setBlue(pixels[yVal][xVal].getBlue());
+					resultPixels[yVal][xVal + move - pixels[0].length].setGreen(pixels[yVal][xVal].getGreen());
+				}
+			}
+			if (yVal % access == 0)
+			move += shiftCount(); 
+		}
+	}
 	  
   /** Method that mirrors the picture around a 
     * vertical mirror in the center of the picture
