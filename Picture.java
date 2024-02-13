@@ -282,8 +282,13 @@ public class Picture extends SimplePicture
 		Pixel[][] resultPixels = result.getPixels2D();
 		int move = 0; 
 		int stepSize = pixels.length / steps; 
-		int access = pixels.length - stepSize * steps; 
-		int addPixelIndex = steps / access; 
+		int excess = pixels.length - stepSize * steps; 
+		int extraIndex = 0;
+		if (excess != 0)
+			extraIndex = steps / excess; 
+		int nextIndent = stepSize; 
+		boolean notAdded = true; 
+		int step = 0; 
 		for (int yVal = 0; yVal < pixels.length; yVal++){
 			for (int xVal = 0; xVal < pixels[0].length; xVal++){
 				if (xVal + move < pixels[0].length){
@@ -297,9 +302,52 @@ public class Picture extends SimplePicture
 					resultPixels[yVal][xVal + move - pixels[0].length].setGreen(pixels[yVal][xVal].getGreen());
 				}
 			}
-			if (yVal % access == 0)
-			move += shiftCount(); 
+			if (excess > 0 && notAdded && step % extraIndex == 0 && yVal == nextIndent - 1){
+				notAdded = false; 
+				nextIndent++; 
+				excess--; 
+				System.out.println(notAdded); 
+			}
+			if (notAdded && yVal == nextIndent - 1){
+				notAdded = true;
+				move += shiftCount; 
+				nextIndent += stepSize; 
+				step++; 
+			}
 		}
+		return result; 
+	}
+	
+	public Picture turn90(){
+		Pixel[][] pixels = this.getPixels2D();
+		Picture result = new Picture(pixels[0].length, pixels.length);
+		Pixel[][] resultPixels = result.getPixels2D();
+		for (int yVal = 0; yVal < pixels.length; yVal++){
+			for (int xVal = 0; xVal < pixels[0].length; xVal++){
+				resultPixels[xVal][resultPixels[0].length - yVal - 1].setRed(pixels[yVal][xVal].getRed());
+				resultPixels[xVal][resultPixels[0].length - yVal - 1].setBlue(pixels[yVal][xVal].getBlue());
+				resultPixels[xVal][resultPixels[0].length - yVal - 1].setGreen(pixels[yVal][xVal].getGreen());
+			}
+		}
+		return result; 
+	}
+	
+	public Picture zoomUpperLeft(){
+		Pixel[][] pixels = this.getPixels2D();
+		Picture result = new Picture(pixels[0].length, pixels.length);
+		Pixel[][] resultPixels = result.getPixels2D();
+		for (int yVal = 0; yVal < pixels.length / 2; yVal++){
+			for (int xVal = 0; xVal < pixels[0].length / 2; xVal++){
+				for (int i = 0; i <= 1; i++){
+					for (int j = 0; j <= 1; j++){
+					resultPixels[yVal * 2 + i][xVal * 2 + j].setRed(pixels[yVal][xVal].getRed());
+					resultPixels[yVal * 2 + i][xVal * 2 + j].setBlue(pixels[yVal][xVal].getBlue());
+					resultPixels[yVal * 2 + i][xVal * 2 + j].setGreen(pixels[yVal][xVal].getGreen());
+				}
+				}
+			}
+		}
+		return result; 
 	}
 	  
   /** Method that mirrors the picture around a 
