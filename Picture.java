@@ -287,9 +287,23 @@ public class Picture extends SimplePicture
 		if (excess != 0)
 			extraIndex = steps / excess; 
 		int nextIndent = stepSize; 
-		boolean notAdded = true; 
-		int step = 0; 
+		int step = 1; 
+		boolean notAdded = true;
+		System.out.println(extraIndex);
 		for (int yVal = 0; yVal < pixels.length; yVal++){
+			if (yVal == nextIndent){
+				System.out.println(yVal + " " + nextIndent + " " + step);
+				if (step % extraIndex == 0 && notAdded){
+					nextIndent++; 
+					notAdded = false;
+				}
+				else{
+					move += shiftCount;
+					step++;
+					nextIndent += stepSize; 
+					notAdded = true; 
+				}
+			}
 			for (int xVal = 0; xVal < pixels[0].length; xVal++){
 				if (xVal + move < pixels[0].length){
 					resultPixels[yVal][xVal + move].setRed(pixels[yVal][xVal].getRed());
@@ -301,18 +315,6 @@ public class Picture extends SimplePicture
 					resultPixels[yVal][xVal + move - pixels[0].length].setBlue(pixels[yVal][xVal].getBlue());
 					resultPixels[yVal][xVal + move - pixels[0].length].setGreen(pixels[yVal][xVal].getGreen());
 				}
-			}
-			if (excess > 0 && notAdded && step % extraIndex == 0 && yVal == nextIndent - 1){
-				notAdded = false; 
-				nextIndent++; 
-				excess--; 
-				System.out.println(notAdded); 
-			}
-			if (notAdded && yVal == nextIndent - 1){
-				notAdded = true;
-				move += shiftCount; 
-				nextIndent += stepSize; 
-				step++; 
 			}
 		}
 		return result; 
@@ -334,12 +336,13 @@ public class Picture extends SimplePicture
 	
 	public Picture zoomUpperLeft(){
 		Pixel[][] pixels = this.getPixels2D();
-		Picture result = new Picture(pixels[0].length, pixels.length);
+		Picture result = new Picture(pixels.length, pixels[0].length);
 		Pixel[][] resultPixels = result.getPixels2D();
-		for (int yVal = 0; yVal < pixels.length / 2; yVal++){
-			for (int xVal = 0; xVal < pixels[0].length / 2; xVal++){
+		for (int yVal = 0; yVal < (pixels.length - 1) / 2; yVal++){
+			for (int xVal = 0; xVal < (pixels[0].length - 1)/ 2; xVal++){
 				for (int i = 0; i <= 1; i++){
 					for (int j = 0; j <= 1; j++){
+					System.out.println(yVal * 2 + i);
 					resultPixels[yVal * 2 + i][xVal * 2 + j].setRed(pixels[yVal][xVal].getRed());
 					resultPixels[yVal * 2 + i][xVal * 2 + j].setBlue(pixels[yVal][xVal].getBlue());
 					resultPixels[yVal * 2 + i][xVal * 2 + j].setGreen(pixels[yVal][xVal].getGreen());
